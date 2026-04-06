@@ -181,7 +181,7 @@ P: Uh for the last seven years.
 `,
 
   generatedTranscript: `
-A: You bring you in here today.
+A: What brings you in here today.
 B: Yeah, I have this pain in my chest.
 A: Okay, and where is the pain exactly?
 B: It's just right over on the left side.
