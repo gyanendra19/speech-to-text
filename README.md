@@ -1,36 +1,36 @@
-# 🎤 Speech-to-Text with Deepgram (Node.js + Express)
+# 🎤 Speech-to-Text with Deepgram + AI Correction (Node.js)
 
 ## 📌 Overview
 
-This project provides a **Speech-to-Text API** using **Deepgram SDK (Nova-3 model)**.
+This project provides a **Speech-to-Text API** using **Deepgram SDK (Nova-3 model)** combined with **AI-powered correction using OpenAI**.
 
-It allows you to:
+It converts audio into **high-quality, structured medical transcripts** with:
 
-* 🎧 Convert audio files into text transcripts
-* 🗣️ Identify multiple speakers (A, B, C...)
-* 🧠 Extract medical conditions from speech
-* ✨ Automatically fix grammar and normalize medical terms
-* ⚠️ Detect basic medical inconsistencies
-* 📊 Return structured JSON output with confidence levels
+* 🎧 Speech-to-text transcription
+* 🗣️ Speaker identification (A, B, C...)
+* 🧠 Medical condition extraction
+* ✨ AI-based grammar & spelling correction
+* 🏥 Medical terminology normalization
+* 🔍 Intelligent error detection & correction tracking
+* 📊 Confidence scoring
 
 ---
 
 ## 🚀 Features
 
-### 🎤 1. Speech-to-Text
+### 🎤 1. Speech-to-Text (Deepgram)
 
-* Uses Deepgram **Nova-3** model for high accuracy
+* Uses **Nova-3** model
 * Supports `.mp3`, `.wav`, `.m4a`, etc.
-* Handles real-world audio with punctuation
+* High accuracy with punctuation and formatting
 
 ---
 
 ### 🗣️ 2. Speaker Diarization
 
-* Automatically detects multiple speakers
-* Formats transcript like:
+Automatically separates speakers:
 
-```
+```text
 A: Patient has diabetes.
 B: Since when?
 A: For 5 years.
@@ -38,71 +38,73 @@ A: For 5 years.
 
 ---
 
-### 🧠 3. Medical Condition Extraction
+### 🧠 3. AI-Powered Correction (OpenAI)
 
-* Extracts conditions like:
+Instead of rule-based fixes, this system uses AI to:
 
-  * diabetes
-  * hypertension
-  * asthma
-  * cancer
-* Based on keyword detection from transcript
-
----
-
-### ✨ 4. Grammar & Text Correction
-
-* Fixes:
-
-  * capitalization (`i` → `I`)
-  * spacing issues
-  * sentence formatting
-* Improves readability of transcript
+* ✅ Fix grammar errors
+* ✅ Correct spelling mistakes
+* ✅ Normalize medical terminology
+* ✅ Improve sentence structure
+* ✅ Understand context (not just keywords)
 
 ---
 
-### 🏥 5. Medical Normalization
+### 🏥 4. Medical Terminology Normalization
 
-Converts informal terms into standard medical terminology:
+AI intelligently converts informal phrases:
 
-| Input               | Output       |
-| ------------------- | ------------ |
-| sugar               | diabetes     |
-| high bp             | hypertension |
-| high blood pressure | hypertension |
+| Input             | Output       |
+| ----------------- | ------------ |
+| sugar             | diabetes     |
+| high bp           | hypertension |
+| breathing problem | asthma       |
 
 ---
 
-### 🔍 6. Error Correction Tracking
+### 🔍 5. Correction Tracking (Point-wise)
 
-Returns **point-wise corrections**:
+Returns structured corrections:
 
 ```json
 "corrections": [
   { "from": "sugar", "to": "diabetes" },
-  { "from": "high bp", "to": "hypertension" }
+  { "from": "diabtes", "to": "diabetes" },
+  { "from": "he dont have", "to": "he doesn't have" }
 ]
 ```
 
 ---
 
-### ⚠️ 7. Basic Medical Issue Detection
+### 🧠 6. Medical Condition Extraction
 
-Detects simple inconsistencies like:
+Extracts conditions from corrected transcript:
 
-* Contradictions (`no diabetes` + `diabetes`)
-* Suspicious dosage values
-* Incorrect phrasing
+* diabetes
+* hypertension
+* asthma
+* cancer
+* fever
+
+---
+
+### ⚠️ 7. Intelligent Error Detection
+
+AI can detect:
+
+* contradictions
+* incorrect phrasing
+* ambiguous medical statements
 
 ---
 
 ### 📊 8. Confidence Scoring
 
-| Level  | Criteria                                    |
-| ------ | ------------------------------------------- |
-| High   | Conditions detected + meaningful transcript |
-| Medium | Conditions detected but weak context        |
-| Low    | No conditions or empty transcript           |
+| Level  | Meaning                       |
+| ------ | ----------------------------- |
+| High   | Clear transcript + conditions |
+| Medium | Some ambiguity                |
+| Low    | Weak or no signal             |
 
 ---
 
@@ -110,8 +112,9 @@ Detects simple inconsistencies like:
 
 * Node.js (ES Modules)
 * Express.js
-* Multer (file upload)
+* Multer (file uploads)
 * Deepgram SDK (speech recognition)
+* OpenAI API (AI correction & NLP)
 
 ---
 
@@ -125,10 +128,11 @@ npm install
 
 ## 🔑 Environment Variables
 
-Create a `.env` file:
+Create `.env` file:
 
 ```env
-DEEPGRAM_API_KEY=your_api_key_here
+DEEPGRAM_API_KEY=your_deepgram_key
+OPENAI_API_KEY=your_openai_key
 ```
 
 ---
@@ -170,9 +174,9 @@ audio: <file>
   "confidence": "high",
   "corrections": [
     { "from": "sugar", "to": "diabetes" },
-    { "from": "high bp", "to": "hypertension" }
-  ],
-  "issues": []
+    { "from": "high bp", "to": "hypertension" },
+    { "from": "he dont have", "to": "he doesn't have" }
+  ]
 }
 ```
 
@@ -183,39 +187,49 @@ audio: <file>
 ```
 Audio Upload
    ↓
-Deepgram (Speech → Text + Speaker Diarization)
+Deepgram (Speech → Text + Speakers)
    ↓
 Speaker Formatting (A/B/C)
    ↓
-Grammar Cleaning
+OpenAI (Grammar + Medical + Spelling Fix)
    ↓
-Medical Normalization
+Correction Extraction
    ↓
-Condition Extraction
+Condition Detection
    ↓
-Error Detection
+Confidence Scoring
    ↓
 Structured JSON Response
 ```
 
 ---
 
+## ⚡ Why OpenAI Instead of Rule-Based?
+
+| Rule-Based         | AI-Based                   |
+| ------------------ | -------------------------- |
+| Limited rules      | Context-aware              |
+| Misses edge cases  | Handles complex language   |
+| Poor typo handling | Strong spelling correction |
+| No understanding   | Semantic understanding     |
+
+---
+
 ## ⚠️ Limitations
 
-* Rule-based system (no AI/LLM)
-* Limited medical vocabulary
-* Basic typo correction
-* Cannot fully understand medical context
+* Requires OpenAI API (paid)
+* Slight latency due to AI processing
+* Depends on input audio quality
 
 ---
 
 ## 🚀 Future Improvements
 
-* 🧠 Advanced NLP (spaCy / medical models)
-* 🔍 Better typo correction (Levenshtein distance)
-* 🏥 Clinical-grade validation
-* 👨‍⚕️ Doctor vs Patient role detection
-* 🎤 Real-time transcription (WebSocket)
+* 🎤 Real-time streaming transcription
+* 🧠 Clinical-grade medical validation
+* 👨‍⚕️ Doctor vs Patient detection
+* 📊 Analytics dashboard
+* 💾 Database storage
 
 ---
 
